@@ -58,8 +58,8 @@ export default class Start extends React.Component {
                     >  
                     <Text style={styles.ChattingText}>Start chatting</Text>                      
                     </TouchableOpacity>                                
-                </View>    
-                </ImageBackground>
+                </View>   
+                </ImageBackground>             
             </View>
         )
     }
@@ -140,4 +140,4 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         textAlign: 'center',
     },
-  });
+});
