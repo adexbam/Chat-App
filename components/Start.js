@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, Button, TextInput, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, ImageBackground, TouchableOpacity, Platform } from 'react-native';
+import KeyboardSpacer from 'react-native-keyboard-spacer'
 
 export default class Start extends React.Component {
     state = {
@@ -27,14 +28,14 @@ export default class Start extends React.Component {
                         onChangeText={(userName) => this.setState({userName})}
                         value={this.state.userName}
                         placeholder=' Your name ...'
-                    />                     
+                    />                    
                     <Text style={styles.ChooseBackgroundColor}>Choose Background Color</Text>
 
                     <View style={styles.UserBackColorContainer}>{/* background color selection */}
-                        {/* black */}
+                        {/* pink */}
                         <TouchableOpacity
-                            onPress={() => this.setState({ userBackgroundColor: '#090C08' })}
-                            style={[styles.BackgroundColors, styles.black]}
+                            onPress={() => this.setState({ userBackgroundColor: '#ffc0cb' })}
+                            style={[styles.BackgroundColors, styles.pink]}
                         />
                         {/* purple */}
                         <TouchableOpacity
@@ -53,6 +54,10 @@ export default class Start extends React.Component {
                         />
                     </View>                  
                     <TouchableOpacity
+                        accessible={true}
+                        accessibilityLabel="Start Chatting"
+                        accessibilityHint="Go to the next screen to start chatting."
+                        accessibilityRole="button"
                         style={styles.ChatButton}
                         onPress={() => this.props.navigation.navigate('Chat', { userName: this.state.userName, userBackgroundColor: this.state.userBackgroundColor })} 
                     >  
@@ -95,7 +100,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     AppInput: {
-        fontSize: 16, 
+        fontSize: 20, 
         fontWeight: '300', 
         color: '#757083', 
         width: '88%',
@@ -125,6 +130,7 @@ const styles = StyleSheet.create({
     purple: { backgroundColor: '#474056' },
     gray: { backgroundColor: '#8A95A5' },
     green: { backgroundColor: '#B9C6AE' },
+    pink: { backgroundColor: '#ffc0cb' },
     ChatButton: {
         color:'#757083',
         textAlign: 'center',
