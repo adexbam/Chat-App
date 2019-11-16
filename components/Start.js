@@ -62,8 +62,8 @@ export default class Start extends React.Component {
                         onPress={() => this.props.navigation.navigate('Chat', { userName: this.state.userName, userBackgroundColor: this.state.userBackgroundColor })} 
                     >  
                     <Text style={styles.ChattingText}>Start chatting</Text>                      
-                    </TouchableOpacity>                                
-                </View>   
+                    </TouchableOpacity>                               
+                </View>
                 </ImageBackground>             
             </View>
         )
@@ -100,9 +100,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     AppInput: {
-        fontSize: 20, 
+        fontSize: 25, 
         fontWeight: '300', 
-        color: '#757083', 
+        color: '#000000', 
         width: '88%',
         height: 50,
         borderColor: 'gray',
