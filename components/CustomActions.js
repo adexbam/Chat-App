@@ -1,61 +1,78 @@
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+//import popTypes define the structure props sent to a component
+import PropTypes from 'prop-types';
+//import React native UI
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-
+//ImagePicker, Permissions and Location are no longer included in expo and need to be installed separately
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 
-//import firebase/firestore
+//import firebase/firestore a db to store data
 import firebase from "firebase";
 import "firebase/firestore";
 
 // create CustomActions class
 export default class CustomActions extends Component {
-
+  //allows user to pick and send images from their device
   pickImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    try{
+      if (status === 'granted') {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        }).catch(error => console.log(error));
 
-    if (status === 'granted') {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      }).catch(error => console.log(error));
-
-      if (!result.cancelled) {
-        const imageUrl = await this.uploadImage(result.uri);
-        this.props.onSend({ image: imageUrl })
+        if (!result.cancelled) {
+          const imageUrl = await this.uploadImage(result.uri);
+          this.props.onSend({ image: imageUrl })
+        }
       }
     }
+    catch(error){
+      console.log(error.message)
+    }
   }
-    
+   
+  //allows user to take a new picture to send
   takePhoto = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA);
-    if (status === 'granted') {
-      let result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images
-      }).catch(error => console.log(error));
-      if (!result.cancelled) {
-        const imageUrl = await this.uploadImage(result.uri);
-        this.props.onSend({ image: imageUrl })
+    try{
+      if (status === 'granted') {
+        let result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images
+        }).catch(error => console.log(error));
+        if (!result.cancelled) {
+          const imageUrl = await this.uploadImage(result.uri);
+          this.props.onSend({ image: imageUrl })
+        }
       }
     }
+    catch(error){
+      console.log(error.message)
+    }
   }
-    
+  
+  //allows user get location
   getLocation = async () => {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
-
-    if (status === 'granted') {
-      let result = await Location.getCurrentPositionAsync({}).catch(error => console.log(error));
-      const longitude = JSON.stringify(result.coords.longitude);
-      const latitude = JSON.stringify(result.coords.latitude);
-      if (result) {
-        this.props.onSend({
-          location: {
-            longitude: result.coords.longitude,
-            latitude: result.coords.latitude,
-          }
-        })
+    try{
+      if (status === 'granted') {
+        let result = await Location.getCurrentPositionAsync({}).catch(error => console.log(error));
+        const longitude = JSON.stringify(result.coords.longitude);
+        const latitude = JSON.stringify(result.coords.latitude);
+        if (result) {
+          this.props.onSend({
+            location: {
+              longitude: result.coords.longitude,
+              latitude: result.coords.latitude,
+            }
+          })
+        }
       }
+    }
+    catch(error){
+      console.log(error.message)
     }
   }
 
@@ -95,13 +112,10 @@ export default class CustomActions extends Component {
         async (buttonIndex) => {
           switch (buttonIndex) {
             case 0:
-              console.log('user wants to pick an image');
               return this.pickImage();
             case 1:
-              console.log('user wants to take a picture');
               return this.takePhoto();
             case 2:
-              console.log('user wants to get their location');
               return this.getLocation();
             default:
           }

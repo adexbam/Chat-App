@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { StyleSheet, Text, View, Button, TextInput, ImageBackground, TouchableOpacity, Platform } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer'
 
+// create Chat Start class for Screen1
 export default class Start extends React.Component {
     state = {
         userName: '',

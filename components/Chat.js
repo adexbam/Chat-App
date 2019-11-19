@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
+//library with GiftedChat UI
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat'
+//import React native UI
 import { View, Platform, StyleSheet, AsyncStorage, NetInfo } from 'react-native'
+//library for Android devices to keep input field above the keyboard
 import KeyboardSpacer from 'react-native-keyboard-spacer'
+//import MapView separately
 import MapView from 'react-native-maps';
-
+//import custom component(take photo, share an image and location) display in message input bar 
 import CustomActions from './CustomActions';
 
-//import firebase/firestore
+//import firebase/firestore a db to store messages
 const firebase = require('firebase');
 require('firebase/firestore');
 
@@ -59,26 +63,30 @@ export default class Chat extends Component {
     }
   }
 
-
   onCollectionUpdate = (querySnapshot) => {
     const messages = [];
     // go through each document
-    querySnapshot.forEach((doc) => {
-      // get the QueryDocumentSnapshot's data
-      var data = doc.data();
-      messages.push({
-        _id: data._id,
-        text: data.text,
-        createdAt: data.createdAt.toDate(),
-        user: data.user,
-        image: data.image || '',
-        location: data.location || null,
+    try{
+      querySnapshot.forEach((doc) => {
+        // get the QueryDocumentSnapshot's data
+        var data = doc.data();
+        messages.push({
+          _id: data._id,
+          text: data.text,
+          createdAt: data.createdAt.toDate(),
+          user: data.user,
+          image: data.image || '',
+          location: data.location || null,
+        });
+        this.setState({ 
+          messages,
+        });
       });
-    });
-    this.setState({ 
-      messages,
-   });
-  }
+    }
+    catch(error){
+      console.log(error.message)
+    }
+  };
 
   addMessage() {
     console.log(this.state.messages[0].user)
@@ -94,13 +102,18 @@ export default class Chat extends Component {
   }
 
   onSend(messages = []) {
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }), () => {
-      this.addMessage();
-      this.saveMessages();
-    });
-  }
+    try{
+      this.setState(previousState => ({
+        messages: GiftedChat.append(previousState.messages, messages),
+      }), () => {
+        this.addMessage();
+        this.saveMessages();
+      });
+    }
+    catch (error){
+      console.log(error)
+    }
+  };
 
   // async functions
   async getMessages() {
@@ -132,7 +145,6 @@ export default class Chat extends Component {
     }
   }
   
-
   componentDidMount() {
     //checks if user is online or offline
     NetInfo.isConnected.fetch().then(isConnected => {
@@ -142,7 +154,7 @@ export default class Chat extends Component {
         this.setState({
           isConnected: true,
         })
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
        firebase.auth().signInAnonymously();
       }
@@ -160,15 +172,15 @@ export default class Chat extends Component {
       this.unsubscribe = this.referenceMessages.onSnapshot(this.onCollectionUpdate)
     });
 
-      //else user is OFFLINE
-      } else {
-        console.log('offline');
-        this.setState({
-          isConnected: false,
-        });
-        //get messages from async storage
-        this.getMessages();
-      }
+    //else user is OFFLINE
+    } else {
+      console.log('offline');
+      this.setState({
+        isConnected: false,
+      });
+      //get messages from async storage
+      this.getMessages();
+    }
     });
     /*
     this.setState({
